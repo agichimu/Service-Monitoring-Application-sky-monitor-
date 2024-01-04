@@ -1,0 +1,130 @@
+Jan 03, 2024 2:15:30 PM ServiceMonitor monitorService
+SEVERE: An unexpected error occurred for service selfservice.harambeesacco.com
+java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+	at ServiceMonitor.getString(ServiceMonitor.java:75)
+	at ServiceMonitor.monitorService(ServiceMonitor.java:61)
+	at ServiceMonitor.lambda$main$0(ServiceMonitor.java:34)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+Jan 03, 2024 2:15:30 PM ServiceMonitor monitorService
+SEVERE: An unexpected error occurred for service Minutes
+java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+	at ServiceMonitor.getString(ServiceMonitor.java:75)
+	at ServiceMonitor.monitorService(ServiceMonitor.java:61)
+	at ServiceMonitor.lambda$main$0(ServiceMonitor.java:34)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+Jan 03, 2024 2:15:30 PM ServiceMonitor monitorService
+SEVERE: An unexpected error occurred for service 10
+java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+	at ServiceMonitor.getString(ServiceMonitor.java:75)
+	at ServiceMonitor.monitorService(ServiceMonitor.java:61)
+	at ServiceMonitor.lambda$main$0(ServiceMonitor.java:34)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+Jan 03, 2024 2:15:30 PM ServiceMonitor monitorService
+SEVERE: An unexpected error occurred for service Welcome to Harambee Sacco Society Ltd Members' Portal
+java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+	at ServiceMonitor.getString(ServiceMonitor.java:75)
+	at ServiceMonitor.monitorService(ServiceMonitor.java:61)
+	at ServiceMonitor.lambda$main$0(ServiceMonitor.java:34)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+Jan 03, 2024 2:15:30 PM ServiceMonitor monitorService
+SEVERE: An unexpected error occurred for service Connected to selfservice.harambeesacco.com.
+java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+	at ServiceMonitor.getString(ServiceMonitor.java:75)
+	at ServiceMonitor.monitorService(ServiceMonitor.java:61)
+	at ServiceMonitor.lambda$main$0(ServiceMonitor.java:34)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+Jan 03, 2024 2:15:30 PM ServiceMonitor monitorService
+SEVERE: An unexpected error occurred for service GET
+java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+	at ServiceMonitor.getString(ServiceMonitor.java:75)
+	at ServiceMonitor.monitorService(ServiceMonitor.java:61)
+	at ServiceMonitor.lambda$main$0(ServiceMonitor.java:34)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+Jan 03, 2024 2:15:30 PM ServiceMonitor monitorService
+SEVERE: An unexpected error occurred for service /
+java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+	at ServiceMonitor.getString(ServiceMonitor.java:75)
+	at ServiceMonitor.monitorService(ServiceMonitor.java:61)
+	at ServiceMonitor.lambda$main$0(ServiceMonitor.java:34)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+Jan 03, 2024 2:15:30 PM ServiceMonitor monitorService
+SEVERE: An unexpected error occurred for service 443
+java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+	at ServiceMonitor.getString(ServiceMonitor.java:75)
+	at ServiceMonitor.monitorService(ServiceMonitor.java:61)
+	at ServiceMonitor.lambda$main$0(ServiceMonitor.java:34)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+Jan 03, 2024 2:15:30 PM ServiceMonitor monitorService
+SEVERE: An unexpected error occurred for service 1
+java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+	at ServiceMonitor.getString(ServiceMonitor.java:75)
+	at ServiceMonitor.monitorService(ServiceMonitor.java:61)
+	at ServiceMonitor.lambda$main$0(ServiceMonitor.java:34)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+Jan 03, 2024 2:15:30 PM ServiceMonitor monitorService
+SEVERE: An unexpected error occurred for service Harambee Members Portal
+java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
+	at ServiceMonitor.getString(ServiceMonitor.java:75)
+	at ServiceMonitor.monitorService(ServiceMonitor.java:61)
+	at ServiceMonitor.lambda$main$0(ServiceMonitor.java:34)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
