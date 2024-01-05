@@ -8,6 +8,8 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -15,23 +17,78 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static ServerReachable.ServerReachable.isServerReachable;
+
 public class ServiceMonitoring {
 
+    private static final boolean ENABLE_FILE_LOGGING = true;
+    private static final int FILE_LOGGING_INTERVAL = 30;
+    private static final boolean ENABLE_LOGS_ARCHIVING = true;
+    private static final int LOGS_ARCHIVING_INTERVAL = 7;
+
+    static class MonitorTask extends TimerTask {
+        private final ServiceConfig serviceConfig;
+
+        public MonitorTask(ServiceConfig serviceConfig) {
+            this.serviceConfig = serviceConfig;
+        }
+
+        @Override
+        public void run() {
+            boolean isServiceUp = isServiceUp();
+            boolean isServerReachable = isServerReachable(serviceConfig.serviceHost(), serviceConfig.servicePort());
+
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            String serviceStatus = isServiceUp ? "Service is up" : "Service is down";
+            String serverStatus = isServerReachable ? "Server is reachable" : "Server is not reachable";
+
+            // printing statuses
+            System.out.println(timestamp + " - " + serviceConfig.serviceName() + ": " + serviceStatus + ", " + serverStatus);
+
+            // Logging status to file if file logging is enabled
+            if (ENABLE_FILE_LOGGING) {
+                try {
+                    logToFile(timestamp + " - " + serviceStatus + ", " + serverStatus, serviceConfig.serviceName());
+                } catch (IOException e) {
+                    System.err.println("Error writing to log file: " + e.getMessage());
+                }
+            }
+        }
+
+        private boolean isServiceUp() {
+            return false;
+        }
+
+        private void logToFile(String logEntry, String serviceName) throws IOException {
+            //directory for log files
+            String logDirectory = "/home/alexander/Sky-monitor-logs";
+            String logFileName = logDirectory + File.separator + serviceName + "_log.txt";
+
+            // Create the log directory if it doesn't exist
+            File directory = new File(logDirectory);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // Write log entry to the specified log file
+            try (FileWriter logFileWriter = new FileWriter(logFileName, true)) {
+                logFileWriter.write(logEntry + "\n");
+                logFileWriter.flush();
+            }
+        }
+    }
+
     public static void main(String[] args) {
-        // Define the XML file path
         String xmlFilePath = "configuration/config.xml";
 
         try {
-            // Read services configuration from XML file
             ServiceConfigReader configReader = new ServiceConfigReader(xmlFilePath);
             ServiceConfig[] servicesConfig = configReader.readServiceConfig();
 
-            // Start monitoring for each service
             for (ServiceConfig serviceConfig : servicesConfig) {
-                // Create a timer to schedule monitoring tasks at defined intervals
                 Timer timer = new Timer();
                 timer.scheduleAtFixedRate(new MonitorTask(serviceConfig),
-                        0, convertToMilliseconds(serviceConfig.getMonitoringInterval(), serviceConfig.getMonitoringIntervalUnit()));
+                        0, convertToMilliseconds(serviceConfig.monitoringInterval(), serviceConfig.monitoringIntervalUnit()));
             }
         } catch (Exception e) {
             System.err.println("Error reading XML file: " + e.getMessage());
@@ -44,44 +101,6 @@ public class ServiceMonitoring {
             case "minutes" -> interval * 60 * 1000L;
             default -> throw new IllegalArgumentException("Unsupported time unit: " + unit);
         };
-    }
-
-    static class MonitorTask extends TimerTask {
-        private final ServiceConfig serviceConfig;
-
-        public MonitorTask(ServiceConfig serviceConfig) {
-            this.serviceConfig = serviceConfig;
-        }
-
-        @Override
-        public void run() {
-            boolean isServiceUp = isServiceUp();
-            boolean isServerAccessible = isServerAccessible();
-
-            // Log the status with timestamp
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-            String serviceStatus = isServiceUp ? "Service is up" : "Service is down";
-            String serverStatus = isServerAccessible ? "Server is accessible" : "Server is not accessible";
-
-            System.out.println(timestamp + " - " + serviceConfig.getServiceName() + ": " + serviceStatus + ", " + serverStatus);
-        }
-
-        private boolean isServiceUp() {
-            try (Socket socket = new Socket(InetAddress.getByName(serviceConfig.getServiceHost()), serviceConfig.getServicePort())) {
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        }
-
-        private boolean isServerAccessible() {
-            try {
-                InetAddress address = InetAddress.getByName(serviceConfig.getServiceHost());
-                return address.isReachable(5000); // 5 seconds timeout
-            } catch (Exception e) {
-                return false;
-            }
-        }
     }
 
     static class ServiceConfigReader {
@@ -103,14 +122,12 @@ public class ServiceMonitoring {
                 Node serviceNode = serviceNodes.item(i);
                 if (serviceNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element serviceElement = (Element) serviceNode;
-                    // Extract service configuration from XML elements
-                    String serviceName = serviceElement.getAttribute("name");
+                    String serviceName = getTextNodeContent(serviceElement, "serviceName");
                     String serviceHost = getTextNodeContent(serviceElement, "serviceHost");
                     int servicePort = Integer.parseInt(getTextNodeContent(serviceElement, "servicePort"));
                     int monitoringInterval = Integer.parseInt(getTextNodeContent(serviceElement, "monitoringIntervals"));
                     String monitoringIntervalUnit = getTextNodeContent(serviceElement, "monitoringIntervalUnit");
 
-                    // Create a ServiceConfig object for each service
                     servicesConfig[i] = new ServiceConfig(serviceName, serviceHost, servicePort, monitoringInterval, monitoringIntervalUnit);
                 }
             }
@@ -126,7 +143,6 @@ public class ServiceMonitoring {
                     return node.getTextContent();
                 }
             }
-            // Log if the text content is not found
             System.out.println("Text content not found for tag: " + tagName);
             return "";
         }
@@ -139,7 +155,8 @@ public class ServiceMonitoring {
         private final int monitoringInterval;
         private final String monitoringIntervalUnit;
 
-        public ServiceConfig(String serviceName, String serviceHost, int servicePort, int monitoringInterval, String monitoringIntervalUnit) {
+        public ServiceConfig(String serviceName, String serviceHost, int servicePort, int monitoringInterval,
+                             String monitoringIntervalUnit) {
             this.serviceName = serviceName;
             this.serviceHost = serviceHost;
             this.servicePort = servicePort;
@@ -147,24 +164,23 @@ public class ServiceMonitoring {
             this.monitoringIntervalUnit = monitoringIntervalUnit;
         }
 
-        // Getter methods for accessing service configuration parameters
-        public String getServiceName() {
+        public String serviceName() {
             return serviceName;
         }
 
-        public String getServiceHost() {
+        public String serviceHost() {
             return serviceHost;
         }
 
-        public int getServicePort() {
+        public int servicePort() {
             return servicePort;
         }
 
-        public int getMonitoringInterval() {
+        public int monitoringInterval() {
             return monitoringInterval;
         }
 
-        public String getMonitoringIntervalUnit() {
+        public String monitoringIntervalUnit() {
             return monitoringIntervalUnit;
         }
     }

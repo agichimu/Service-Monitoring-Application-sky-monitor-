@@ -1,90 +1,124 @@
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-
-import java.io.FileReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class ServiceMonitor {
 
+    private static final String CONFIG_PATH = "configuration/config.xml"; // Specify the path to your configuration file
+    private static final String LOG_PREFIX = "/home/alexander/service_log";
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HH:mm:ss");
+
     public static void main(String[] args) {
-        // Define the CSV file path
-        String csvFilePath = "/home/alexander/services.csv";
+        startMonitoring();
+    }
 
-        try (CSVReader reader = new CSVReader(new FileReader(csvFilePath))) {
-            // Read all data from the CSV file
-            String[][] servicesData = reader.readAll().toArray(new String[0][0]);
-
-            // Assuming the first row (index 0) contains headers, start from index 1 in the loop
-            for (int i = 1; i < servicesData.length && i < servicesData[0].length; i++) {
-                String serviceName = servicesData[2][i];
-                String serviceHost = servicesData[3][i];
-                int servicePort = Integer.parseInt(servicesData[4][i]);
-                int monitoringInterval = Integer.parseInt(servicesData[9][i]);
-                String monitoringIntervalUnit = servicesData[10][i];
-
-                // Create a timer to schedule monitoring tasks at defined intervals
-                Timer timer = new Timer();
-                timer.scheduleAtFixedRate(new MonitorTask(serviceName, serviceHost, servicePort),
-                        0, convertToMilliseconds(monitoringInterval, monitoringIntervalUnit));
+    private static void startMonitoring() {
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                checkServicesStatus(CONFIG_PATH);
             }
-        } catch (IOException | CsvException e) {
-            System.err.println("Error reading CSV file: " + e.getMessage());
+        }, 0, 1000 * 60); // Check every minute (adjust as needed)
+
+        // You can add other commands like starting and stopping the monitoring application here
+    }
+
+    private static void checkServicesStatus(String configPath) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+
+            Document document = builder.parse(new File(configPath));
+            document.getDocumentElement().normalize();
+
+            NodeList serviceList = document.getElementsByTagName("service");
+
+            for (int i = 0; i < serviceList.getLength(); i++) {
+                Node serviceNode = serviceList.item(i);
+
+                if (serviceNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element serviceElement = (Element) serviceNode;
+
+                    String serviceName = serviceElement.getElementsByTagName("serviceName").item(0).getTextContent();
+                    String serviceHost = serviceElement.getElementsByTagName("serviceHost").item(0).getTextContent();
+                    int servicePort = Integer.parseInt(serviceElement.getElementsByTagName("servicePort").item(0).getTextContent());
+
+                    boolean isServerReachable = isServerReachable(serviceHost, servicePort);
+                    boolean isServiceReachable = isServiceReachable(serviceHost, servicePort, serviceElement.getElementsByTagName("serviceResourceURI").item(0).getTextContent());
+
+                    logServiceStatus(serviceName, isServiceReachable, isServerReachable);
+                }
+            }
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private static long convertToMilliseconds(int interval, String unit) {
-        return switch (unit.toLowerCase()) {
-            case "seconds" -> interval * 1000L;
-            case "minutes" -> interval * 60 * 1000L;
-            default -> throw new IllegalArgumentException("Unsupported time unit: " + unit);
-        };
+    private static boolean isServerReachable(String host, int port) {
+        try (Socket socket = new Socket(host, port)) {
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
-    static class MonitorTask extends TimerTask {
-        private final String serviceName;
-        private final String serviceHost;
-        private final int servicePort;
+    private static boolean isServiceReachable(String host, int port, String resourceURI) {
+        try {
+            HttpClient httpClient = HttpClient.newHttpClient();
+            URI uri = new URI("http", null, host, port, resourceURI, null, null);
 
-        public MonitorTask(String serviceName, String serviceHost, int servicePort) {
-            this.serviceName = serviceName;
-            this.serviceHost = serviceHost;
-            this.servicePort = servicePort;
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            return response.statusCode() == 200; // Assuming 200 OK means the service is reachable
+        } catch (Exception e) {
+            return false;
         }
+    }
 
-        @Override
-        public void run() {
-            boolean isServiceUp = isServiceUp();
-            boolean isServerAccessible = isServerAccessible();
+    private static void logServiceStatus(String serviceName, boolean isServiceReachable, boolean isServerReachable) {
+        try {
+            String logFileName = LOG_PREFIX + "_" + dateFormat.format(new Date()) + ".txt";
+            Path logFilePath = Paths.get(logFileName);
 
-            // Log the status with timestamp
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-            String serviceStatus = isServiceUp ? "Service is up" : "Service is down";
-            String serverStatus = isServerAccessible ? "Server is accessible" : "Server is not accessible";
-
-            System.out.println(timestamp + " - " + serviceName + ": " + serviceStatus + ", " + serverStatus);
-        }
-
-        private boolean isServiceUp() {
-            try (Socket socket = new Socket(InetAddress.getByName(serviceHost), servicePort)) {
-                return true;
-            } catch (IOException e) {
-                return false;
+            if (!Files.exists(logFilePath)) {
+                Files.createFile(logFilePath);
             }
-        }
 
-        private boolean isServerAccessible() {
-            try {
-                InetAddress address = InetAddress.getByName(serviceHost);
-                return address.isReachable(5000); // 5 seconds timeout
-            } catch (IOException e) {
-                return false;
+            try (FileWriter writer = new FileWriter(logFilePath.toFile(), true)) {
+                String logEntry = dateFormat.format(new Date()) + " - Service: " + serviceName +
+                        ", Service Reachable: " + isServiceReachable +
+                        ", Server Reachable: " + isServerReachable + "\n";
+                writer.write(logEntry);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
