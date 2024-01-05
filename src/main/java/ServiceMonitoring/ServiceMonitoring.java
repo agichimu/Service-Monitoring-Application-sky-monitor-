@@ -56,7 +56,12 @@ public class ServiceMonitoring {
         }
 
         private boolean isServiceUp() {
-            return false;
+            try (Socket socket = new Socket(serviceConfig.serviceHost(), serviceConfig.servicePort())) {
+                System.out.println(socket);
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
         }
 
         private void logToFile(String logEntry, String serviceName) throws IOException {
