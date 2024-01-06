@@ -10,7 +10,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,11 +20,6 @@ import static ServerReachable.ServerReachable.isServerReachable;
 
 public class ServiceMonitoring {
 
-    private static final boolean ENABLE_FILE_LOGGING = true;
-    private static final int FILE_LOGGING_INTERVAL = 30;
-    private static final boolean ENABLE_LOGS_ARCHIVING = true;
-    private static final int LOGS_ARCHIVING_INTERVAL = 7;
-
     static class MonitorTask extends TimerTask {
         private final ServiceConfig serviceConfig;
 
@@ -35,50 +29,43 @@ public class ServiceMonitoring {
 
         @Override
         public void run() {
+            // Check if the service is up and if the server is reachable
             boolean isServiceUp = isServiceUp();
             boolean isServerReachable = isServerReachable(serviceConfig.serviceHost(), serviceConfig.servicePort());
 
+            // Create a timestamp
             String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+            //service and server status
             String serviceStatus = isServiceUp ? "Service is up" : "Service is down";
             String serverStatus = isServerReachable ? "Server is reachable" : "Server is not reachable";
 
-            // printing statuses
+
             System.out.println(timestamp + " - " + serviceConfig.serviceName() + ": " + serviceStatus + ", " + serverStatus);
 
-            // Logging status to file if file logging is enabled
-            if (ENABLE_FILE_LOGGING) {
-                try {
-                    logToFile(timestamp + " - " + serviceStatus + ", " + serverStatus, serviceConfig.serviceName());
-                } catch (IOException e) {
-                    System.err.println("Error writing to log file: " + e.getMessage());
-                }
-            }
+            // Logging  statuses to a file
+            logToFile(timestamp + " - " + serviceStatus + ", " + serverStatus, serviceConfig.serviceName());
         }
 
         private boolean isServiceUp() {
             try (Socket socket = new Socket(serviceConfig.serviceHost(), serviceConfig.servicePort())) {
-                System.out.println(socket);
                 return true;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 return false;
             }
         }
 
-        private void logToFile(String logEntry, String serviceName) throws IOException {
-            //directory for log files
+        private void logToFile(String logEntry, String serviceName) {
+            // directory for log files
             String logDirectory = "/home/alexander/Sky-monitor-logs";
             String logFileName = logDirectory + File.separator + serviceName + "_log.txt";
-
-            // Create the log directory if it doesn't exist
-            File directory = new File(logDirectory);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
 
             // Write log entry to the specified log file
             try (FileWriter logFileWriter = new FileWriter(logFileName, true)) {
                 logFileWriter.write(logEntry + "\n");
                 logFileWriter.flush();
+            } catch (IOException e) {
+                System.err.println("Error writing to log file: " + e.getMessage());
             }
         }
     }
@@ -92,20 +79,17 @@ public class ServiceMonitoring {
 
             for (ServiceConfig serviceConfig : servicesConfig) {
                 Timer timer = new Timer();
+                // Schedule monitoring tasks at fixed intervals
                 timer.scheduleAtFixedRate(new MonitorTask(serviceConfig),
-                        0, convertToMilliseconds(serviceConfig.monitoringInterval(), serviceConfig.monitoringIntervalUnit()));
+                        0, switch (serviceConfig.monitoringIntervalUnit().toLowerCase()) {
+                            case "seconds" -> serviceConfig.monitoringInterval() * 1000L;
+                            case "minutes" -> serviceConfig.monitoringInterval() * 60 * 1000L;
+                            default -> throw new IllegalArgumentException("Unsupported time unit: " + serviceConfig.monitoringIntervalUnit());
+                        });
             }
         } catch (Exception e) {
             System.err.println("Error reading XML file: " + e.getMessage());
         }
-    }
-
-    private static long convertToMilliseconds(int interval, String unit) {
-        return switch (unit.toLowerCase()) {
-            case "seconds" -> interval * 1000L;
-            case "minutes" -> interval * 60 * 1000L;
-            default -> throw new IllegalArgumentException("Unsupported time unit: " + unit);
-        };
     }
 
     static class ServiceConfigReader {
