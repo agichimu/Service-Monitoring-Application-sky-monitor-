@@ -57,10 +57,10 @@ public class ServiceMonitoring {
 
         private void logToFile(String logEntry, String serviceName) {
             // directory for log files
-            String logDirectory = "/home/alexander/Sky-monitor-logs";
+            String logDirectory = "/home/brutal/Sky-monitor-logs";
             String logFileName = logDirectory + File.separator + serviceName + "_log.txt";
 
-            // Write log entry to the specified log file
+            // Writing logs for the services independently
             try (FileWriter logFileWriter = new FileWriter(logFileName, true)) {
                 logFileWriter.write(logEntry + "\n");
                 logFileWriter.flush();
@@ -79,7 +79,7 @@ public class ServiceMonitoring {
 
             for (ServiceConfig serviceConfig : servicesConfig) {
                 Timer timer = new Timer();
-                // Schedule monitoring tasks at fixed intervals
+                // monitoring tasks at fixed intervals
                 timer.scheduleAtFixedRate(new MonitorTask(serviceConfig),
                         0, switch (serviceConfig.monitoringIntervalUnit().toLowerCase()) {
                             case "seconds" -> serviceConfig.monitoringInterval() * 1000L;
