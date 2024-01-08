@@ -26,7 +26,7 @@
     system should have configuration on the file, Enable Logs Archiving, to enable or disable
     this feature
 
-## Success connecting to a service 
+## Success on connection to a service 
 ![Screenshot from 2024-01-08 16-47-58](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/032b2184-23c6-4609-afe3-b60ab14ccf9f)
 
 
