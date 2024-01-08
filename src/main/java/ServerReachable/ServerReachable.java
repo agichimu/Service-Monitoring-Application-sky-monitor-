@@ -13,16 +13,21 @@ import org.xml.sax.SAXException;
 
 public class ServerReachable {
 
+    public static void main(String[] args) {
+        readConfig("configuration/config.xml");
+    }
     public static boolean isServerReachable(String host, int port) {
+        readConfig("configuration/config.xml");
         try (Socket socket = new Socket(host, port)) {
-           // System.out.println(socket);
+            System.out.println(socket);
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    public static void checkServerReachability(String configPath) {
+    // reading configuration folder
+    public static void readConfig(String configPath) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -40,14 +45,12 @@ public class ServerReachable {
 
                     String host = serviceElement.getElementsByTagName("serviceHost").item(0).getTextContent();
                     int port = Integer.parseInt(serviceElement.getElementsByTagName("servicePort").item(0).getTextContent());
+                    String serviceName = serviceElement.getElementsByTagName("serviceName").item(0).getTextContent();
+                    System.out.println("Service:\n" +
+                            "Service name:  " + serviceName + "\n" +
+                            "Host:          " + host + "\n" +
+                            "Port:          " + port);
 
-                    boolean isReachable = isServerReachable(host, port);
-
-                    if (isReachable) {
-                        System.out.println("server '" + serviceElement.getElementsByTagName("serviceName").item(0).getTextContent() + "' is reachable");
-                    } else {
-                        System.out.println("Server '" + serviceElement.getElementsByTagName("serviceName").item(0).getTextContent() + "' is not reachable");
-                    }
                 }
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {

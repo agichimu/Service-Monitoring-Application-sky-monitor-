@@ -10,7 +10,7 @@ public class CSVFileGenerator {
 
     public static void main(String[] args) {
         // Define the CSV file path
-        String csvFilePath = "/home/alexander/services.csv";
+        String csvFilePath = "/home/brutal/services.csv";
 
         // Create records for services
         String[][] servicesData = {

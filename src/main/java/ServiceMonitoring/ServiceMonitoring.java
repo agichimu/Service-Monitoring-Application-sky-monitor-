@@ -33,7 +33,6 @@ public class ServiceMonitoring {
             boolean isServiceUp = isServiceUp();
             boolean isServerReachable = isServerReachable(serviceConfig.serviceHost(), serviceConfig.servicePort());
 
-            // Create a timestamp
             String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
             //service and server status
@@ -43,7 +42,7 @@ public class ServiceMonitoring {
 
             System.out.println(timestamp + " - " + serviceConfig.serviceName() + ": " + serviceStatus + ", " + serverStatus);
 
-            // Logging  statuses to a file
+            // Logging  statuses
             logToFile(timestamp + " - " + serviceStatus + ", " + serverStatus, serviceConfig.serviceName());
         }
 
