@@ -11,6 +11,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
@@ -50,126 +53,127 @@ public class ServiceMonitoring {
             try (Socket socket = new Socket(serviceConfig.serviceHost(), serviceConfig.servicePort())) {
                 return true;
             } catch (Exception e) {
+                System.err.println("Error connecting to the service: " + e.getMessage());
                 return false;
             }
         }
 
+
         private void logToFile(String logEntry, String serviceName) {
-            // directory for log files
             String logDirectory = "/home/brutal/Sky-monitor-logs";
             String logFileName = logDirectory + File.separator + serviceName + "_log.txt";
 
-            // Writing logs for the services independently
-            try (FileWriter logFileWriter = new FileWriter(logFileName, true)) {
-                logFileWriter.write(logEntry + "\n");
-                logFileWriter.flush();
+            try {
+                Files.write(Paths.get(logFileName), (logEntry + "\n").getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             } catch (IOException e) {
                 System.err.println("Error writing to log file: " + e.getMessage());
             }
         }
-    }
 
-    public static void main(String[] args) {
-        String xmlFilePath = "configuration/config.xml";
 
-        try {
-            ServiceConfigReader configReader = new ServiceConfigReader(xmlFilePath);
-            ServiceConfig[] servicesConfig = configReader.readServiceConfig();
+        public static void main(String[] args) {
+            String xmlFilePath = "configuration/config.xml";
 
-            for (ServiceConfig serviceConfig : servicesConfig) {
-                Timer timer = new Timer();
-                // monitoring tasks at fixed intervals
-                timer.scheduleAtFixedRate(new MonitorTask(serviceConfig),
-                        0, switch (serviceConfig.monitoringIntervalUnit().toLowerCase()) {
-                            case "seconds" -> serviceConfig.monitoringInterval() * 1000L;
-                            case "minutes" -> serviceConfig.monitoringInterval() * 60 * 1000L;
-                            default -> throw new IllegalArgumentException("Unsupported time unit: " + serviceConfig.monitoringIntervalUnit());
-                        });
-            }
-        } catch (Exception e) {
-            System.err.println("Error reading XML file: " + e.getMessage());
-        }
-    }
+            try {
+                ServiceConfigReader configReader = new ServiceConfigReader(xmlFilePath);
+                ServiceConfig[] servicesConfig = configReader.readConfig();
 
-    static class ServiceConfigReader {
-        private final String xmlFilePath;
-
-        public ServiceConfigReader(String xmlFilePath) {
-            this.xmlFilePath = xmlFilePath;
-        }
-
-        public ServiceConfig[] readServiceConfig() throws Exception {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new File(xmlFilePath));
-
-            NodeList serviceNodes = document.getElementsByTagName("service");
-            ServiceConfig[] servicesConfig = new ServiceConfig[serviceNodes.getLength()];
-
-            for (int i = 0; i < serviceNodes.getLength(); i++) {
-                Node serviceNode = serviceNodes.item(i);
-                if (serviceNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element serviceElement = (Element) serviceNode;
-                    String serviceName = getTextNodeContent(serviceElement, "serviceName");
-                    String serviceHost = getTextNodeContent(serviceElement, "serviceHost");
-                    int servicePort = Integer.parseInt(getTextNodeContent(serviceElement, "servicePort"));
-                    int monitoringInterval = Integer.parseInt(getTextNodeContent(serviceElement, "monitoringIntervals"));
-                    String monitoringIntervalUnit = getTextNodeContent(serviceElement, "monitoringIntervalUnit");
-
-                    servicesConfig[i] = new ServiceConfig(serviceName, serviceHost, servicePort, monitoringInterval, monitoringIntervalUnit);
+                for (ServiceConfig serviceConfig : servicesConfig) {
+                    Timer timer = new Timer();
+                    // monitoring tasks at fixed intervals
+                    timer.scheduleAtFixedRate(new MonitorTask(serviceConfig),
+                            0, switch (serviceConfig.monitoringIntervalUnit().toLowerCase()) {
+                                case "seconds" -> serviceConfig.monitoringInterval() * 1000L;
+                                case "minutes" -> serviceConfig.monitoringInterval() * 60 * 1000L;
+                                default ->
+                                        throw new IllegalArgumentException("Unsupported time unit: " + serviceConfig.monitoringIntervalUnit());
+                            });
                 }
+            } catch (Exception e) {
+                System.err.println("Error reading XML file: " + e.getMessage());
             }
-
-            return servicesConfig;
         }
 
-        private String getTextNodeContent(Element element, String tagName) {
-            NodeList nodeList = element.getElementsByTagName(tagName);
-            if (nodeList.getLength() > 0) {
-                Node node = nodeList.item(0).getFirstChild();
-                if (node != null && node.getNodeType() == Node.TEXT_NODE) {
-                    return node.getTextContent();
+        static class ServiceConfigReader {
+            private final String xmlFilePath;
+
+            public ServiceConfigReader(String xmlFilePath) {
+                this.xmlFilePath = xmlFilePath;
+            }
+
+            public ServiceConfig[] readConfig() throws Exception {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document document = builder.parse(new File(xmlFilePath));
+
+                NodeList serviceNodes = document.getElementsByTagName("service");
+                ServiceConfig[] servicesConfig = new ServiceConfig[serviceNodes.getLength()];
+
+                for (int i = 0; i < serviceNodes.getLength(); i++) {
+                    Node serviceNode = serviceNodes.item(i);
+                    if (serviceNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element serviceElement = (Element) serviceNode;
+                        String serviceName = getTextNodeContent(serviceElement, "serviceName");
+                        String serviceHost = getTextNodeContent(serviceElement, "serviceHost");
+                        int servicePort = Integer.parseInt(getTextNodeContent(serviceElement, "servicePort"));
+                        int monitoringInterval = Integer.parseInt(getTextNodeContent(serviceElement, "monitoringInterval"));
+                        String monitoringIntervalUnit = getTextNodeContent(serviceElement, "monitoringIntervalUnit");
+
+                        servicesConfig[i] = new ServiceConfig(serviceName, serviceHost, servicePort, monitoringInterval, monitoringIntervalUnit);
+                    }
                 }
+
+                return servicesConfig;
             }
-            System.out.println("Text content not found for tag: " + tagName);
-            return "";
-        }
-    }
 
-    static class ServiceConfig {
-        private final String serviceName;
-        private final String serviceHost;
-        private final int servicePort;
-        private final int monitoringInterval;
-        private final String monitoringIntervalUnit;
-
-        public ServiceConfig(String serviceName, String serviceHost, int servicePort, int monitoringInterval,
-                             String monitoringIntervalUnit) {
-            this.serviceName = serviceName;
-            this.serviceHost = serviceHost;
-            this.servicePort = servicePort;
-            this.monitoringInterval = monitoringInterval;
-            this.monitoringIntervalUnit = monitoringIntervalUnit;
+            private String getTextNodeContent(Element element, String tagName) {
+                NodeList nodeList = element.getElementsByTagName(tagName);
+                if (nodeList.getLength() > 0) {
+                    Node node = nodeList.item(0).getFirstChild();
+                    if (node != null && node.getNodeType() == Node.TEXT_NODE) {
+                        return node.getTextContent();
+                    }
+                }
+                System.out.println("Text content not found for tag: " + tagName);
+                return "";
+            }
         }
 
-        public String serviceName() {
-            return serviceName;
-        }
+        static class ServiceConfig {
+            private final String serviceName;
+            private final String serviceHost;
+            private final int servicePort;
+            private final int monitoringInterval;
+            private final String monitoringIntervalUnit;
 
-        public String serviceHost() {
-            return serviceHost;
-        }
+            public ServiceConfig(String serviceName, String serviceHost, int servicePort, int monitoringInterval,
+                                 String monitoringIntervalUnit) {
+                this.serviceName = serviceName;
+                this.serviceHost = serviceHost;
+                this.servicePort = servicePort;
+                this.monitoringInterval = monitoringInterval;
+                this.monitoringIntervalUnit = monitoringIntervalUnit;
+            }
 
-        public int servicePort() {
-            return servicePort;
-        }
+            public String serviceName() {
+                return serviceName;
+            }
 
-        public int monitoringInterval() {
-            return monitoringInterval;
-        }
+            public String serviceHost() {
+                return serviceHost;
+            }
 
-        public String monitoringIntervalUnit() {
-            return monitoringIntervalUnit;
+            public int servicePort() {
+                return servicePort;
+            }
+
+            public int monitoringInterval() {
+                return monitoringInterval;
+            }
+
+            public String monitoringIntervalUnit() {
+                return monitoringIntervalUnit;
+            }
         }
     }
 }

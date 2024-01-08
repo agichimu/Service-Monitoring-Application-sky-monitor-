@@ -6,7 +6,7 @@
         <servicePort>443</servicePort>
         <serviceResourceURI>/</serviceResourceURI>
         <serviceMethod>GET</serviceMethod>
-        <monitoringIntervals>10</monitoringIntervals>
+        <monitoringInterval>10</monitoringInterval>
         <monitoringIntervalUnit>Minutes</monitoringIntervalUnit>
         <enableFileLogging>Yes</enableFileLogging>
         <fileLoggingInterval>Hourly</fileLoggingInterval>
@@ -19,7 +19,7 @@
         <servicePort>443</servicePort>
         <serviceResourceURI>/</serviceResourceURI>
         <serviceMethod>GET</serviceMethod>
-        <monitoringIntervals>300</monitoringIntervals>
+        <monitoringInterval>300</monitoringInterval>
         <monitoringIntervalUnit>Seconds</monitoringIntervalUnit>
         <enableFileLogging>No</enableFileLogging>
         <fileLoggingInterval>Daily</fileLoggingInterval>

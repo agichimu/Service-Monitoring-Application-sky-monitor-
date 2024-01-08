@@ -18,7 +18,7 @@ public class ServerReachable {
     }
     public static boolean isServerReachable(String host, int port) {
         readConfig("configuration/config.xml");
-        try (Socket socket = new Socket(host, port)) {
+        try (Socket socket = new Socket(host, port)) { //socket is an endpoint of communication btwn two machines over a network
             System.out.println(socket);
             return true;
         } catch (IOException e) {
