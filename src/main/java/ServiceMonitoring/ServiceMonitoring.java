@@ -8,7 +8,6 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -62,7 +61,6 @@ public class ServiceMonitoring {
         private void logToFile(String logEntry, String serviceName) {
             String logDirectory = "/home/brutal/Sky-monitor-logs";
             String logFileName = logDirectory + File.separator + serviceName + "_log.txt";
-
             try {
                 Files.write(Paths.get(logFileName), (logEntry + "\n").getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             } catch (IOException e) {
