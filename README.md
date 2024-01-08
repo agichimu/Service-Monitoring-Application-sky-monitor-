@@ -1,4 +1,5 @@
 # **Service-Monitoring-Application-sky-monitor**
+
 ### A Service is an application hosted on a particular server. 
 ## The purpose of this Service Monitoring Application is to check if:
 1. A service’s application is up or down e.g. a website or web application or even an API.
@@ -25,6 +26,12 @@
 10. The **system should allow archiving of older log files as per the Log Archiving Intervals**. The
     system should have configuration on the file, Enable Logs Archiving, to enable or disable
     this feature
+----
+Installation - to install this programme clone the repo
+````
+git clone https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-
+````
+----
 
 ## Success on connection to a service 
 ![Screenshot from 2024-01-08 16-47-58](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/032b2184-23c6-4609-afe3-b60ab14ccf9f)
