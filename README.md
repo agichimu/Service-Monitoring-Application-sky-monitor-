@@ -27,14 +27,17 @@
     this feature.
 
 ### `folder for logging`  
-![Screenshot from 2024-01-08 13-40-12.png](..%2F..%2F..%2F..%2Fhome%2Fbrutal%2FPictures%2FScreenshots%2FScreenshot%20from%202024-01-08%2013-40-12.png)
+![Screenshot from 2024-01-08 13-40-12](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/acae62ad-8d12-42a2-988c-b8a3e581ce0d)
+
 
 ## `logs for each service` 
-![Screenshot from 2024-01-08 13-40-27.png](..%2F..%2F..%2F..%2Fhome%2Fbrutal%2FPictures%2FScreenshots%2FScreenshot%20from%202024-01-08%2013-40-27.png) 
+![Screenshot from 2024-01-08 13-40-27](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/abcae61b-74a0-498c-bcd3-1da98779d93b)
 
-![Screenshot from 2024-01-08 13-40-58.png](..%2F..%2F..%2F..%2Fhome%2Fbrutal%2FPictures%2FScreenshots%2FScreenshot%20from%202024-01-08%2013-40-58.png)
+![Screenshot from 2024-01-08 13-40-58](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/2c6273b5-1cd6-4392-b77d-db64546b8d32)
 
-![Screenshot from 2024-01-08 13-41-12.png](..%2F..%2F..%2F..%2Fhome%2Fbrutal%2FPictures%2FScreenshots%2FScreenshot%20from%202024-01-08%2013-41-12.png)
+
+![Screenshot from 2024-01-08 13-41-12](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/89ca2935-21ec-4aa8-899f-0c021e3c8134)
+
 ````
 Authors : Alexander Wambugu 
 ````
