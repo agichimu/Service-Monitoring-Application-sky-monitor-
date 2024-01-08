@@ -4,6 +4,7 @@
 ## The purpose of this Service Monitoring Application is to check if:
 1. A service’s application is up or down e.g. a website or web application or even an API.
 2. The server where the service is hosted is up or down
+----
 ## Functional Requirements
 1. The system should have a configuration file to store the services that need to be monitored.
 2. The system should dynamically support the following configuration file types:
@@ -26,8 +27,9 @@
 10. The **system should allow archiving of older log files as per the Log Archiving Intervals**. The
     system should have configuration on the file, Enable Logs Archiving, to enable or disable
     this feature
+----    
 ----
-Installation - to install this programme clone the repo
+Installation - to install this programme clone the repository
 ````
 git clone https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-
 ````
