@@ -26,6 +26,10 @@
     system should have configuration on the file, Enable Logs Archiving, to enable or disable
     this feature
 
+## Success connecting to a service 
+![Screenshot from 2024-01-08 16-47-58](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/032b2184-23c6-4609-afe3-b60ab14ccf9f)
+
+
 ## error connecting to a service
 **![Screenshot from 2024-01-08 15-50-20](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/67b9a5e7-1249-40a4-bf01-ab9c9e7d1bf1)
 
