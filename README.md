@@ -39,5 +39,5 @@
 ![Screenshot from 2024-01-08 13-41-12](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/89ca2935-21ec-4aa8-899f-0c021e3c8134)
 
 ````
-Authors : Alexander Wambugu 
+Author :  https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-
 ````
