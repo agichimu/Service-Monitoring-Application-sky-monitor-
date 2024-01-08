@@ -29,6 +29,29 @@ public class ServiceMonitoring {
             this.serviceConfig = serviceConfig;
         }
 
+        public static void main(String[] args) {
+            String xmlFilePath = "configuration/config.xml";
+
+            try {
+                ServiceConfigReader configReader = new ServiceConfigReader(xmlFilePath);
+                ServiceConfig[] servicesConfig = configReader.readConfig();
+
+                for (ServiceConfig serviceConfig : servicesConfig) {
+                    Timer timer = new Timer();
+                    // monitoring tasks
+                    timer.scheduleAtFixedRate(new MonitorTask(serviceConfig),
+                            0, switch (serviceConfig.monitoringIntervalUnit().toLowerCase()) {
+                                case "seconds" -> serviceConfig.monitoringInterval() * 1000L;
+                                case "minutes" -> serviceConfig.monitoringInterval() * 60 * 1000L;
+                                default ->
+                                        throw new IllegalArgumentException("Unsupported time unit: " + serviceConfig.monitoringIntervalUnit());
+                            });
+                }
+            } catch (Exception e) {
+                System.err.println("Error reading XML file: " + e.getMessage());
+            }
+        }
+
         @Override
         public void run() {
             // Check if the service is up and if the server is reachable
@@ -50,13 +73,13 @@ public class ServiceMonitoring {
 
         private boolean isServiceUp() {
             try (Socket socket = new Socket(serviceConfig.serviceHost(), serviceConfig.servicePort())) {
+                System.out.println("Successfully Connected to: " + serviceConfig.serviceHost());
                 return true;
             } catch (Exception e) {
                 System.err.println("Error connecting to the service: " + e.getMessage());
                 return false;
             }
         }
-
 
         private void logToFile(String logEntry, String serviceName) {
             String logDirectory = "/home/brutal/Sky-monitor-logs";
@@ -65,30 +88,6 @@ public class ServiceMonitoring {
                 Files.write(Paths.get(logFileName), (logEntry + "\n").getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             } catch (IOException e) {
                 System.err.println("Error writing to log file: " + e.getMessage());
-            }
-        }
-
-
-        public static void main(String[] args) {
-            String xmlFilePath = "configuration/config.xml";
-
-            try {
-                ServiceConfigReader configReader = new ServiceConfigReader(xmlFilePath);
-                ServiceConfig[] servicesConfig = configReader.readConfig();
-
-                for (ServiceConfig serviceConfig : servicesConfig) {
-                    Timer timer = new Timer();
-                    // monitoring tasks at fixed intervals
-                    timer.scheduleAtFixedRate(new MonitorTask(serviceConfig),
-                            0, switch (serviceConfig.monitoringIntervalUnit().toLowerCase()) {
-                                case "seconds" -> serviceConfig.monitoringInterval() * 1000L;
-                                case "minutes" -> serviceConfig.monitoringInterval() * 60 * 1000L;
-                                default ->
-                                        throw new IllegalArgumentException("Unsupported time unit: " + serviceConfig.monitoringIntervalUnit());
-                            });
-                }
-            } catch (Exception e) {
-                System.err.println("Error reading XML file: " + e.getMessage());
             }
         }
 
