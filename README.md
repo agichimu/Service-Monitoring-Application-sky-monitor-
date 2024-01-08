@@ -35,18 +35,20 @@ git clone https://github.com/agichimu/Service-Monitoring-Application-sky-monitor
 ````
 ----
 
+----
 ## Success on connection to a service 
 ![Screenshot from 2024-01-08 16-47-58](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/032b2184-23c6-4609-afe3-b60ab14ccf9f)
 
+----
 
 ## error connecting to a service
 **![Screenshot from 2024-01-08 15-50-20](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/67b9a5e7-1249-40a4-bf01-ab9c9e7d1bf1)
 
-
+----
 ### `folder for logging`  
 ![Screenshot from 2024-01-08 13-40-12](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/acae62ad-8d12-42a2-988c-b8a3e581ce0d)
 
-
+----
 ## `logs for each service` 
 ![Screenshot from 2024-01-08 13-40-27](https://github.com/agichimu/Service-Monitoring-Application-sky-monitor-/assets/97959452/abcae61b-74a0-498c-bcd3-1da98779d93b)
 
